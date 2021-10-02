@@ -1,17 +1,14 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-
-const timerSize = (a) => `${410 - a}px`;
-const timerSize2 = (a) => `
-    width: ${410 - a}px};
-    height: ${410 - a}px};
-`;
+import { COLORS, FONTS } from "../utils/constants";
+import Countdown, { zeroPad } from "react-countdown";
 
 const Container = styled.div`
   position: relative;
-  ${timerSize2(0)};
+  width: 410px;
+  height: 410px;
 
   border-radius: 50%;
   background: green;
@@ -19,17 +16,14 @@ const Container = styled.div`
   box-shadow: -50px -50px 100px #272c5a, 50px 50px 100px #121530;
   margin: 48px auto;
   margin-bottom: 0;
-  z-index: -1;
 
   @media (max-width: 450px) {
-    width: ${timerSize(110)};
-    height: ${timerSize(110)};
+    width: 300px;
+    height: 300px;
   }
 `;
 
 const TimerInner = styled.div`
-  ${timerSize2(44)};
-
   border-radius: 50%;
   background-color: #161932;
   position: absolute;
@@ -37,68 +31,122 @@ const TimerInner = styled.div`
   left: 22px;
 
   @media (max-width: 450px) {
-    width: ${timerSize(154)};
-    height: ${timerSize(154)};
+    top: 16px; 
+    left: 16px;
   }
 `;
 
 const CustomProgressBar = styled(CircularProgressbar)`
   margin: 13px;
-  ${timerSize2(71)};
-  font-weight: bold;
+  width: 339px;
+  height: 339px;
+  font-weight: ${({ font }) => (font === "Space Mono" ? "normal" : "bold")};
+  font-family: ${({ font }) => font};
 
   @media (max-width: 450px) {
-    width: ${timerSize(182)};
-    height: ${timerSize(182)};
+    width: 244px;
+    height: 244px;
   }
 `;
 
 const TimerButton = styled.button`
-  position: absolute;
-  top: 65%;
-  left: 35%;
-
+  font-family: ${({font}) => font};
+  margin-top: 30px;
+  padding: 0;
   background-color: transparent;
   border: none;
+  cursor: pointer;
 
   font-weight: bold;
   font-size: 16px;
   line-height: 20px;
-
-  /* identical to box height */
   text-align: center;
   letter-spacing: 15px;
+  margin-right: -15px;
 
   color: #d7e0ff;
 
   @media (max-width: 450px) {
-    top: 65%;
-    left: 31%;
     font-size: 14px;
     line-height: 21px;
-
-    /* identical to box height */
     letter-spacing: 13.125px;
+    margin-right: -13.125px;
   }
 `;
 
-const Timer = () => {
-  const percentage = 99;
+const Wrapper = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 60%;
+  margin: auto;
+  text-align: center;
+
+  @media (max-width: 450px) {
+    top: 50%
+  }
+`;
+
+const Timer = ({ values, toggle }) => {
+  const timerRef = useRef();
+
+  const renderer = ({ minutes, seconds, total, api }) => {
+    const countdownTime = `${zeroPad(minutes)}:${zeroPad(seconds)}`;
+
+    const value = values[toggle] * 60;
+
+    const progressBarValue = (100 / value) * (value - total / 1000);
+
+    return (
+      <>
+        <CustomProgressBar
+          font={FONTS[values.font]}
+
+          strokeWidth={3}
+          styles={buildStyles({
+            pathColor: `${COLORS[values.color]}`,
+            trailColor: "transparent",
+            textColor: `#D7E0FF`,
+          })}
+          value={progressBarValue}
+          text={countdownTime}
+        />
+        <Wrapper>
+          <TimerButton font={FONTS[values.font]} onClick={handleButtonState}>
+            {!api.isCompleted()
+              ? !api.isStarted()
+                ? "start"
+                : "pause"
+              : "restart"}
+          </TimerButton>
+        </Wrapper>
+      </>
+    );
+  };
+
+  const handleButtonState = () => {
+    if (timerRef.current.isStopped() || timerRef.current.isPaused()) {
+      timerRef.current.start();
+    }
+    
+    if (timerRef.current.isStarted()) {
+      timerRef.current.pause();
+    }
+
+    if (timerRef.current.isCompleted()) {
+      timerRef.current.stop();
+    }
+  };
+
   return (
     <Container>
       <TimerInner>
-        <CustomProgressBar
-          strokeWidth={3}
-          styles={buildStyles({
-            pathColor: "#F87070",
-            trailColor: "transparent",
-            textSize: "30px",
-            textColor: "#d7e0ff",
-          })}
-          value={percentage}
-          text={`25:00`}
+        <Countdown
+          date={Date.now() + values[toggle] * 60000}
+          renderer={renderer}
+          ref={timerRef}
+          autoStart={false}
         />
-        <TimerButton>start</TimerButton>
       </TimerInner>
     </Container>
   );

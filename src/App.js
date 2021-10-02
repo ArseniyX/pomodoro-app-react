@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import Timer from "./components/Timer";
 import settingsIcon from "./assets/icon-settings.svg";
 import Settings from "./components/Settings";
+import React, { useState, createContext, useRef } from "react";
 
 const Container = styled.div`
   margin: 48px auto;
@@ -30,24 +31,62 @@ const SettingsButton = styled.button`
   border: none;
 `;
 
+export const Context = createContext("");
+
 const App = () => {
+  const initialValue = {
+    pomodoro: "25",
+    short_break: "5",
+    long_break: "15",
+    font: "0",
+    color: "0",
+  };
+
+  const [values, setValues] = useState(initialValue);
+
+  const [toggle, setToggle] = useState("pomodoro");
+
+  const [acceptedValues, setAcceptedValues] = useState(initialValue);
+
+  const visible = useRef(null);
+
+  const toggleVisibility = () => {
+    visible.current.hidden = !visible.current.hidden;
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    setAcceptedValues(values);
+    toggleVisibility();
+  };
+
   return (
     <>
       <GlobalStyles />
       <>
         <Container>
-          <Header />
-          <Timer />
+          <Header
+            values={acceptedValues}
+            toggle={toggle}
+            setToggle={setToggle}
+          />
+          <Timer values={acceptedValues} toggle={toggle} />
           <SettingsButton>
-            <SettingsImg src={settingsIcon} alt="settings-icon" />
+            <SettingsImg
+              src={settingsIcon}
+              alt="settings-icon"
+              onClick={toggleVisibility}
+            />
           </SettingsButton>
-
-          {/* <body>
-          pomodoro short break long break start pause restart Settings Time
-          (minutes) pomodoro short break long break Font Color Apply
-        </body> */}
-
-          <Settings visibility={false} />
+          <Context.Provider value={values}>
+            <Settings
+              toggleVisibility={toggleVisibility}
+              setValues={setValues}
+              onSubmit={onSubmit}
+              values={values}
+              visible={visible}
+            />
+          </Context.Provider>
         </Container>
       </>
     </>

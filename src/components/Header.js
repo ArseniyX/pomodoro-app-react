@@ -1,47 +1,65 @@
 import React from "react";
 import styled from "styled-components";
 import logo from "../assets/logo.svg";
+import { FONTS, COLORS } from "../utils/constants";
 
-const StyledHeader = styled.header``;
-
-const Logo = styled.img``;
+const StyledHeader = styled.header`
+  position: relative;
+  z-index: 1;
+`;
 
 const Navigation = styled.div`
-  min-width: 327px;
+  z-index: -1;
+  min-width: 300px;
   max-width: 373px;
+  width: 90%;
   height: 63px;
   background: #161932;
-  border-radius: 31.5px;
+  border-radius: 31px;
   margin: 47px auto;
 
   display: flex;
   justify-content: space-evenly;
 `;
 
-const Label = styled.label`
+const ToggleButton = styled.button`
   margin: auto;
-  color: #1e213f;
+  cursor: pointer;
+
+  color: ${({ fontColor }) => fontColor};
+  font-family: ${({ font }) => font};
 
   width: 120px;
-  /* height: 48px; */
-  background: #f87070;
+  background: ${({ color }) => color};
   border-radius: 26.5px;
   padding: 17px 0;
   font-weight: bold;
+  border: none;
 
   @media (max-width: 375px) {
-      width: 105px;
+    width: 105px;
   }
 `;
 
-const Header = () => {
+const Header = ({ values, toggle, setToggle }) => {
+  const onToggleButton = (name) => {
+    setToggle(name);
+  };
+
   return (
     <StyledHeader>
-      <Logo src={logo} alt="alt" />
+      <img src={logo} alt="alt" />
       <Navigation>
-        <Label>pomodoro</Label>
-        <Label>short break</Label>
-        <Label>long break</Label>
+        {["pomodoro", "short_break", "long_break"].map((value) => (
+          <ToggleButton
+            font={FONTS[values.font]}
+            color={toggle === value ? COLORS[values.color] : "transparent"}
+            fontColor={toggle === value ? "#1E213F" : "#D7E0FF"}
+            onClick={() => onToggleButton(value)}
+          >
+            {value.replace("_", " ")}
+          </ToggleButton>
+        ))}
       </Navigation>
     </StyledHeader>
   );

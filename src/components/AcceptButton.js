@@ -1,32 +1,50 @@
-import React from 'react'
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
+import { COLORS } from "../utils/constants";
 
 const ApplyButton = styled.input`
-  position: absolute;
-  top: 93%;
-  left: 40%;
   border: none;
   width: 140px;
   height: 53px;
   border-radius: 26.5px;
-  background-color: #f87070;
+  background-color: ${({ color = "#F87070" }) => color};
   font-weight: bold;
   font-size: 16px;
+  font-family: inherit;
   line-height: 20px;
-
-  /* identical to box height */
   text-align: center;
-
   color: #ffffff;
 
   &:hover {
+    opacity: 0.7;
     cursor: pointer;
-    background-color: #f98d8d;
   }
 `;
 
-const AcceptButton = () => {
-    return <ApplyButton type="submit" value="Apply"/>;
-}
+const Rectangle = styled.div`
+  position: absolute;
+  top: 93%;
+  left: 50%;
+  margin-left: -70px;
+  border: none;
+  width: 140px;
+  height: 53px;
+  border-radius: 26.5px;
+  background-color: #fff;
 
-export default AcceptButton
+  @media (max-width: 540px) {
+    top: 412px;
+    left: 50%;
+    margin-left: -70px;
+  }
+`;
+
+const AcceptButton = ({ values }) => {
+  return (
+    <Rectangle>
+      <ApplyButton type="submit" color={COLORS[values.color]} value="Apply" />
+    </Rectangle>
+  );
+};
+
+export default AcceptButton;
