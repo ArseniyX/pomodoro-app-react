@@ -1,0 +1,23 @@
+[33mcommit 8c7a74e48451f46e9cf0aa21311d604a16d8b982[m[33m ([m[1;36mHEAD[m[33m)[m
+Author: ArseniyX <jkl@usa.com>
+Date:   Sat Oct 2 15:18:46 2021 +0300
+
+    created the stable app with design
+
+[33mcommit 23785d594b8b40c34502a95cc135a0d801ce25e9[m
+Author: ArseniyX <jkl@usa.com>
+Date:   Tue Sep 28 23:53:46 2021 +0300
+
+    added styles for the project
+
+[33mcommit 7fb4aa87ec85a49d1c22615736a0bb1a72bb9adc[m
+Author: ArseniyX <jkl@usa.com>
+Date:   Tue Sep 28 18:28:30 2021 +0300
+
+    added design and styled-components
+
+[33mcommit 3a94aebd48d6378f6447131c9d028754d7fe46cc[m
+Author: ArseniyX <jkl@usa.com>
+Date:   Tue Sep 28 13:14:35 2021 +0300
+
+    init cra
